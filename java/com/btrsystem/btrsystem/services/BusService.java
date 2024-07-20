@@ -1,6 +1,8 @@
 package com.btrsystem.btrsystem.services;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,4 +18,10 @@ public class BusService {
 	    public Bus saveBus(Bus bus) {
 	        return busRepository.save(bus);
 	    }
+
+		public List<Bus> getAllbus() {
+			// TODO Auto-generated method stub
+			return busRepository.findAll();
+		}
+		
 }

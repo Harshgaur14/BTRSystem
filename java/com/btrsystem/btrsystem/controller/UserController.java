@@ -38,8 +38,6 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -56,38 +54,7 @@ public class UserController {
 	@Autowired
 	static
 	TokenBlacklist tokenBlacklist;
-	
-	
-	
-	
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		String jwt = null;
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();	
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-		try {
-			usersService.getUserByUsername(loginRequest.getUsername());
-			
-			jwt = jwtUtils.generateJwtToken(authentication);
 		
-			
-			
-			     
-	    }catch (Exception e2) {
-	    	
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");	
-		}
-	System.out.println(jwt);
-//		System.out.println(roles);
-		return ResponseEntity.ok(new JwtResponse(jwt));
-	}
-	
 	
 	
 	
@@ -125,21 +92,7 @@ public class UserController {
 	    return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	  }
 	
-		//logout 
-	@PreAuthorize("hasRole('ROLE_USER')")
-	 @GetMapping("/logout")
-	    public static void logout(HttpServletRequest request, HttpServletResponse response) {
-	        // Extract JWT token from the Authorization header
-	        String authorizationHeader = request.getHeader("Authorization");
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            // Remove "Bearer " prefix
-	            String jwtToken = authorizationHeader.substring(7);
-	            
-	            // Now you have the JWT token, you can perform further actions like invalidation
-	            TokenBlacklist.invalidateToken(jwtToken);
-	            
-	        }
-	    }
+	
 
 	
 

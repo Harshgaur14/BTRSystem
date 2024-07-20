@@ -46,8 +46,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/admin")
 public class AdminController {
 	
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -64,39 +62,6 @@ public class AdminController {
 	@Autowired
 	static
 	TokenBlacklist tokenBlacklist;
-	
-	@Autowired
-	private BusService busService;
-	
-	
-	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		String jwt = null;
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();	
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-		try {
-			usersService.getUserByUsername(loginRequest.getUsername());
-			
-			jwt = jwtUtils.generateJwtToken(authentication);
-		
-			
-			
-			     
-	    }catch (Exception e2) {
-	    	
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");	
-		}
-	System.out.println(jwt);
-//		System.out.println(roles);
-		return ResponseEntity.ok(new JwtResponse(jwt));
-	}
-	
 	
 	
 	
@@ -135,39 +100,9 @@ public class AdminController {
 	  }
 	
 		//logout 
-	@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-	 @GetMapping("/logout")
-	    public static void logout(HttpServletRequest request, HttpServletResponse response) {
-	        // Extract JWT token from the Authorization header
-	        String authorizationHeader = request.getHeader("Authorization");
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            // Remove "Bearer " prefix
-	            String jwtToken = authorizationHeader.substring(7);
-	            
-	            // Now you have the JWT token, you can perform further actions like invalidation
-	            TokenBlacklist.invalidateToken(jwtToken);
-	            
-	        }
-	    }
+	
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@PostMapping("/addbus")
-    public ResponseEntity<Bus> addBus(@RequestBody Bus bus, @RequestParam int userId) {
-        // Retrieve the user by userId
-        User user = usersService.getUserById(userId);
-
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // Set the user to the bus
-        bus.setUser(user);
-
-        // Save the bus
-        Bus savedBus = busService.saveBus(bus);
-
-        return ResponseEntity.ok(savedBus);
-    }
+	
 	
 //	@PostMapping("/addUser")
 //	public ResponseEntity<Employee> addUser(@RequestBody Employee employee){

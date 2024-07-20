@@ -1,13 +1,14 @@
 package com.btrsystem.btrsystem.models;
 
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.List;
 
 @Entity
 @Table(name="usertable")
@@ -33,11 +34,8 @@ public class User {
     @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number")
     private String phoneNo;
     
+    
     private String role;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Bus> buses;
 
     // Default constructor
     public User() {}
@@ -96,6 +94,8 @@ public class User {
         this.phoneNo = phoneNo;
     }
 
+
+
     public String getRole() {
         return role;
     }
@@ -103,13 +103,4 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
-
-    public List<Bus> getBuses() {
-        return buses;
-    }
-
-    public void setBuses(List<Bus> buses) {
-        this.buses = buses;
-    }
 }
-
